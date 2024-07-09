@@ -1,0 +1,10 @@
+*.apk
+*.iml
+*.keystore
+.DS_Store
+.gradle
+.idea
+build
+keystore.properties
+local.properties
+service-account-keys.json
