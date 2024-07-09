@@ -1,0 +1,15 @@
+[versions]
+agp = "8.4.1"
+kotlin = "1.9.23"
+kotlinx-serialization = "1.6.3"
+work-runtime-ktx = "2.9.0"
+
+[libraries]
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work-runtime-ktx" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+processphoenix = "com.jakewharton:process-phoenix:3.0.0"
+
+[plugins]
+android-library = { id = "com.android.library", version.ref = "agp" }
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
