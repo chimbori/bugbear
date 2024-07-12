@@ -4,7 +4,7 @@ kotlin = "1.9.23"
 kotlinx-serialization = "1.6.3"
 work-runtime-ktx = "2.9.0"
 
-publish-group = "com.github.chimbori.bugbear"
+publish-group = "com.chimbori.bugbear"
 publish-artifact = "bugbear"
 publish-version = "0.1.1"
 
