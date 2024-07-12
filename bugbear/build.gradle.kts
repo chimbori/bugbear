@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode.Strict
 plugins {
   id("com.android.library")
   id("org.jetbrains.kotlin.android")
+  id("maven-publish")
   alias(libs.plugins.kotlinx.serialization)
 }
 
@@ -28,6 +29,36 @@ android {
 
 kotlin {
   explicitApi = Strict
+}
+
+publishing {
+  publications {
+    register<MavenPublication>("release") {
+      groupId = libs.versions.publish.group.get()
+      artifactId = libs.versions.publish.artifact.get()
+      version = libs.versions.publish.version.get()
+      afterEvaluate {
+        from(components["release"])
+      }
+      pom {
+        name.set(libs.versions.publish.name.get())
+        description.set(libs.versions.publish.description.get())
+        url.set(libs.versions.publish.url.get())
+        licenses {
+          license {
+            name.set("MIT")
+            url.set("https://opensource.org/licenses/MIT")
+          }
+        }
+      }
+    }
+  }
+  repositories {
+    maven {
+      name = "local"
+      url = uri(project.layout.buildDirectory.dir("repo").get())
+    }
+  }
 }
 
 dependencies {
