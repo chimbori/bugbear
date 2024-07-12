@@ -51,7 +51,7 @@ public class BugBear(
       withDelay(3_000) {
         uploadReports()
       }
-      Log.i(TAG, "BugBear initialized; ${config?.uploadUrl}")
+      Log.i(TAG, "BugBear initialized; uploadUrl: ${config?.uploadUrl}")
     } else {
       Log.e(TAG, "BugBear not initialized; `config` is null, and no matching `HostedConfig` found.")
     }
