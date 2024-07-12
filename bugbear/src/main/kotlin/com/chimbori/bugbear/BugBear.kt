@@ -33,6 +33,12 @@ public class BugBear(
     private set
 
   init {
+    if (hostedConfigUrl != null && config == null) {
+      runBlocking {
+        config = fetchHostedConfig(hostedConfigUrl)?.findConfig(context.packageName)
+      }
+    }
+
     if (!config?.uploadUrl.isNullOrBlank()) {
       setDefaultUncaughtExceptionHandler { _, throwable ->
         Log.e(TAG, "Caught ${throwable.javaClass.name} for ${appContext.packageName}")
