@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.work.WorkManager
 import com.chimbori.bugbear.populators.createDefaultPopulators
 import com.jakewharton.processphoenix.ProcessPhoenix
+import java.lang.Thread.UncaughtExceptionHandler
 import java.lang.Thread.setDefaultUncaughtExceptionHandler
 import kotlin.reflect.KClass
 import kotlinx.coroutines.runBlocking
@@ -24,7 +25,8 @@ public class BugBear(
   context: Context,
   internal var config: Config?,
   internal val hostedConfigUrl: String? = null,
-  private val populators: List<Populator> = createDefaultPopulators(context.applicationContext)
+  private val populators: List<Populator> = createDefaultPopulators(context.applicationContext),
+  private val alsoForwardTo: UncaughtExceptionHandler? = null,
 ) {
   private val appContext = context.applicationContext
   private val workManager by lazy { WorkManager.getInstance(appContext) }
@@ -40,9 +42,10 @@ public class BugBear(
     }
 
     if (!config?.uploadUrl.isNullOrBlank()) {
-      setDefaultUncaughtExceptionHandler { _, throwable ->
+      setDefaultUncaughtExceptionHandler { thread, throwable ->
         Log.e(TAG, "Caught ${throwable.javaClass.name} for ${appContext.packageName}")
         store.write(generateReport(throwable, uncaught = true))
+        alsoForwardTo?.uncaughtException(thread, throwable)
         ProcessPhoenix.triggerRebirth(appContext)
       }
       withDelay(3_000) {
