@@ -29,20 +29,25 @@ public data class HostedConfig(
 }
 
 public suspend fun fetchHostedConfig(hostedConfigUrl: String): HostedConfig? = withContext(Dispatchers.IO) {
-  val url = URL(hostedConfigUrl)
-  (url.openConnection() as HttpURLConnection).run {
-    if (responseCode == 200) {
-      try {
-        return@withContext Json.decodeFromString<HostedConfig>(inputStream.bufferedReader().readText())
-      } catch (t: Throwable) {
-        Log.e(TAG, "fetchHostedConfig: failed to parse JSON from $hostedConfigUrl")
-        t.printStackTrace()
+  try {
+    val url = URL(hostedConfigUrl)
+    (url.openConnection() as HttpURLConnection).run {
+      if (responseCode == 200) {
+        try {
+          return@withContext Json.decodeFromString<HostedConfig>(inputStream.bufferedReader().readText())
+        } catch (t: Throwable) {
+          Log.e(TAG, "fetchHostedConfig: failed to parse JSON from $hostedConfigUrl")
+          t.printStackTrace()
+          return@withContext null
+        }
+      } else {
+        Log.e(TAG, "fetchHostedConfig: failed: ${url.host} responded with HTTP $responseCode")
         return@withContext null
       }
-    } else {
-      Log.e(TAG, "fetchHostedConfig: failed: ${url.host} responded with HTTP $responseCode")
-      return@withContext null
     }
+  } catch (t: Throwable) {
+    t.printStackTrace()
+    return@withContext null
   }
 }
 
