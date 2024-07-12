@@ -48,7 +48,7 @@ public class BugBear(
       withDelay(3_000) {
         uploadReports()
       }
-      Log.e(TAG, "BugBear initialized; ${config?.uploadUrl}")
+      Log.i(TAG, "BugBear initialized; ${config?.uploadUrl}")
     } else {
       Log.e(TAG, "BugBear not initialized; `config` is null, and no matching `HostedConfig` found.")
     }
@@ -64,7 +64,7 @@ public class BugBear(
   }
 
   public fun generateReport(t: Throwable? = null, uncaught: Boolean = false): Report {
-    Log.e(TAG, "Generated a report for ${appContext.packageName}")
+    Log.i(TAG, "Generated a report for ${appContext.packageName}")
     return populators.fold(Report(throwable = t, isSilent = !uncaught)) { report, populator ->
       populator.populate(report)
     }

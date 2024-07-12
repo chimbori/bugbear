@@ -90,7 +90,7 @@ private fun uploadPendingReports(uploadUrl: URL, store: ReportStore): Boolean {
   val reportFiles = store.list()
   Log.i(TAG, "${reportFiles.size} reports to upload")
   return reportFiles.all { reportFile ->
-    Log.e(TAG, "Uploading ${reportFile.name}")
+    Log.i(TAG, "Uploading ${reportFile.name}")
     uploadReport(uploadUrl, reportFile).also { uploadedSuccessfully ->
       if (uploadedSuccessfully) {
         reportFile.delete()
