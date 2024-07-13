@@ -61,6 +61,16 @@ If you really need a bunch of extra information added to the outgoing report, yo
 The data format used by BugBear is exactly the same as ACRA (minus a few fields that BugBear chooses not to log), so you can use any ACRA-compatible backend to collect and analyze crashes.
 We recommend [Acrarium](https://github.com/F43nd1r/Acrarium), maintained by the current maintainer of ACRA.
 
+## New Features
+
+### Hosted Config
+
+Typically, the configuration for bug reporting libraries is baked into the app binary.
+But this prevents developers from being able to update the Report Upload URL, or to decommission bug reporting for apps that are no longer supported.
+
+BugBear offers a way to host the configuration on a remote server which is fetched at runtime & cached on the client.
+This allows developers to switch the reporting URL or disable BugBear entirely, all remotely.
+
 # License
 
     Copyright 2024 © Chimbori — Makers of Hermit, the Lite Apps Browser.
