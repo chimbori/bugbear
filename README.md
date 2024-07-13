@@ -71,6 +71,15 @@ But this prevents developers from being able to update the Report Upload URL, or
 BugBear offers a way to host the configuration on a remote server which is fetched at runtime & cached on the client.
 This allows developers to switch the reporting URL or disable BugBear entirely, all remotely.
 
+### Forward Exceptions to Another Handler
+
+Typically, each application has only a single `UncaughtExceptionHandler` that is configured to handle & report all uncaught exceptions.
+This restriction prevents multiple bug reporting libraries from co-existing.
+
+BugBear, when set as the default UncaughtExceptionHandler, makes it optionally possible to forward the caught exceptions to another bug reporting library.
+This feature allows developers to compare the performance, latency, and other characteristics of multiple libraries at runtime when migrating from one library to another.
+When such a migration is complete, the optional forwarding can be turned off permanently.
+
 # License
 
     Copyright 2024 © Chimbori — Makers of Hermit, the Lite Apps Browser.
