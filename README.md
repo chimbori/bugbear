@@ -80,6 +80,55 @@ BugBear, when set as the default UncaughtExceptionHandler, makes it optionally p
 This feature allows developers to compare the performance, latency, and other characteristics of multiple libraries at runtime when migrating from one library to another.
 When such a migration is complete, the optional forwarding can be turned off permanently.
 
+# Usage
+
+## Using a Local Config
+
+SampleApplication.kt
+```
+class SampleApplication : Application() {
+  override fun onCreate() {
+    super.onCreate()
+    bugBear = BugBear(
+      context = applicationContext,
+      config = Config(
+        uploadUrl = "http://username:password@example.com/report"
+      )
+    )
+  }
+}
+```
+
+## Using a Hosted Config
+
+SampleApplication.kt
+```
+class SampleApplication : Application() {
+  override fun onCreate() {
+    super.onCreate()
+    bugBear = BugBear(
+      context = applicationContext,
+      config = null,
+      hostedConfigUrl = "http://example.com/bugbear.json",
+    )
+  }
+}
+```
+
+bugbear.json
+```
+{
+  "apps": [
+    {
+      "package_name": "com.example.bugbear",
+      "config": {
+        "uploadUrl": "http://username:password@example.com/report"
+      }
+    }
+  ]
+}
+```
+
 # License
 
     Copyright 2024 © Chimbori — Makers of Hermit, the Lite Apps Browser.
