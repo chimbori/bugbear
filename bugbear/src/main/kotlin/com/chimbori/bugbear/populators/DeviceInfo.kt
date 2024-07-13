@@ -166,8 +166,8 @@ internal class ResourceConfigurationInfo(private val context: Context) : Populat
     }
 
     // TODO: Unmask the bit masks.
-    screenLayout = "TODO"
-    uiMode = "TODO"
+    // screenLayout = "TODO"
+    // uiMode = "TODO"
   }
 }
 
