@@ -31,3 +31,25 @@ internal fun withDelay(delayMs: Long = 0, block: () -> Unit) {
 internal fun String.md5(): String =
   BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteArray()))
     .toString(16).padStart(32, '0')
+
+/**
+ * [tag] is of type [Any] so we can avoid calling [.toString()] on it unless required.
+ * If [tag] & [method] are both null, nothing will be logged. Any exceptions thrown will be squelched silently.
+ */
+internal inline fun <T> catchAll(
+  tag: Any? = null,
+  method: String? = null,
+  noinline message: (() -> String)? = null,
+  block: () -> T
+): T? = try {
+  block()
+} catch (throwable: Throwable) {
+  if (tag != null && method != null) {
+    Log.e(tag.toString(), "$method: $message")
+    throwable.printStackTrace()
+  }
+  if (throwable is UninitializedPropertyAccessException) {
+    throw throwable  // Crash because this is a developer error.
+  }
+  null
+}
