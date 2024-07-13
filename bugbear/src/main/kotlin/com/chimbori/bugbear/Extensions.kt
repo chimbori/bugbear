@@ -2,7 +2,10 @@ package com.chimbori.bugbear
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import java.io.File
+import java.math.BigInteger
+import java.security.MessageDigest
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -24,3 +27,7 @@ internal fun File.subDir(subDirectory: String) = File(this, subDirectory).also {
 internal fun withDelay(delayMs: Long = 0, block: () -> Unit) {
   Handler(Looper.myLooper() ?: Looper.getMainLooper()).postDelayed(Runnable(block), delayMs)
 }
+
+internal fun String.md5(): String =
+  BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteArray()))
+    .toString(16).padStart(32, '0')
