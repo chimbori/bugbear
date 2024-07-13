@@ -10,6 +10,7 @@ import java.lang.Thread.setDefaultUncaughtExceptionHandler
 import kotlin.reflect.KClass
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
 public lateinit var bugBear: BugBear
 
@@ -31,13 +32,16 @@ public class BugBear(
   private val appContext = context.applicationContext
   private val workManager by lazy { WorkManager.getInstance(appContext) }
 
-  internal var store = ReportStore(reportDir = appContext.cacheDir.subDir("crash-reports"))
+  private val cacheDir = appContext.cacheDir.subDir("crash-reports")
+  internal var store = ReportStore(reportDir = cacheDir)
     private set
 
   init {
     if (hostedConfigUrl != null && config == null) {
       runBlocking {
-        config = fetchHostedConfig(hostedConfigUrl)?.findConfig(context.packageName)
+        config = CachedTextFile(hostedConfigUrl, cacheDir).fetch()?.let {
+          Json.decodeFromString<HostedConfig>(it).findConfig(context.packageName)
+        }
       }
     }
 
