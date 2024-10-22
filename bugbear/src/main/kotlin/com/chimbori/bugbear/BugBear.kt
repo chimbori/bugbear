@@ -55,9 +55,9 @@ public class BugBear(
       withDelay(3_000) {
         uploadReports()
       }
-      Log.i(TAG, "BugBear initialized.")
+      Log.i(TAG, "BugBear initialized")
     } else {
-      Log.e(TAG, "BugBear not initialized; no destinations are enabled, no matching `HostedConfig` found.")
+      Log.e(TAG, "BugBear not initialized; no destinations are enabled, no matching `HostedConfig` found")
     }
   }
 
@@ -80,11 +80,11 @@ public class BugBear(
   public fun uploadReports() {
     when {
       config?.isAnyDestinationEnabled != true -> {
-        Log.e(TAG, "Upload: no destinations enabled.")
+        Log.e(TAG, "Upload: no destinations enabled")
         return
       }
       store.list().isEmpty() -> {
-        Log.e(TAG, "Upload: No reports to upload.")
+        Log.e(TAG, "Upload: No reports to upload")
         return
       }
       else -> uploadReports(workManager = workManager)
