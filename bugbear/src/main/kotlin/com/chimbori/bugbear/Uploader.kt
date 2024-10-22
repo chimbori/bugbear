@@ -38,14 +38,16 @@ internal fun uploadReports(workManager: WorkManager) {
 
 public class UploadWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
   override fun doWork(): Result = try {
-    val uploadUrl = bugBear.config?.uploadUrl
-    when {
-      uploadUrl.isNullOrBlank() -> {
-        Log.e(TAG, "uploadUrl not provided")
-        failure()
-      }
-      uploadPendingReports(URL(uploadUrl), bugBear.store) -> success()
-      else -> retry()
+    val allUploadsSuccessful = bugBear.config?.destinations
+      ?.filter { destination -> destination.enabled }
+      ?.map { destination -> URL(destination.uploadUrl) }
+      ?.all { uploadUrl -> uploadPendingReports(uploadUrl, bugBear.store) }
+      ?: true  // Default is true, if there were no destinations defined or enabled.
+    if (allUploadsSuccessful) {
+      deleteReports(bugBear.store)
+      success()
+    } else {
+      retry()
     }
   } catch (t: Throwable) {
     Log.e(TAG, "Upload failed: ${t.stackTraceToString()}")
@@ -98,5 +100,7 @@ private fun uploadPendingReports(uploadUrl: URL, store: ReportStore): Boolean {
     }
   }
 }
+
+private fun deleteReports(store: ReportStore) = store.list().all { it.delete() }
 
 private const val TAG = "BugBear.Uploader"

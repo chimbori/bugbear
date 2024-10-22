@@ -45,7 +45,7 @@ public class BugBear(
       }
     }
 
-    if (!config?.uploadUrl.isNullOrBlank()) {
+    if (config?.isAnyDestinationEnabled == true) {
       setDefaultUncaughtExceptionHandler { thread, throwable ->
         Log.e(TAG, "Caught ${throwable.javaClass.name} for ${appContext.packageName}")
         store.write(generateReport(throwable, uncaught = true))
@@ -55,9 +55,9 @@ public class BugBear(
       withDelay(3_000) {
         uploadReports()
       }
-      Log.i(TAG, "BugBear initialized; uploadUrl: ${config?.uploadUrl}")
+      Log.i(TAG, "BugBear initialized.")
     } else {
-      Log.e(TAG, "BugBear not initialized; `config` is null, and no matching `HostedConfig` found.")
+      Log.e(TAG, "BugBear not initialized; no destinations are enabled, no matching `HostedConfig` found.")
     }
   }
 
@@ -79,11 +79,14 @@ public class BugBear(
 
   public fun uploadReports() {
     when {
-      bugBear.config?.uploadUrl.isNullOrBlank() -> {
-        Log.e(TAG, "Upload failed; `uploadUrl` not provided in `config`.")
+      config?.isAnyDestinationEnabled != true -> {
+        Log.e(TAG, "Upload: no destinations enabled.")
         return
       }
-      store.list().isEmpty() -> return
+      store.list().isEmpty() -> {
+        Log.e(TAG, "Upload: No reports to upload.")
+        return
+      }
       else -> uploadReports(workManager = workManager)
     }
   }
@@ -92,12 +95,24 @@ public class BugBear(
 @Serializable
 public data class Config(
   /**
+   * Each BugBear instance can be configured to upload to multiple destinations. This can be useful when migrating
+   * from one destination to another, or for redundancy.
+   */
+  val destinations: Collection<Destination>,
+) {
+  val isAnyDestinationEnabled: Boolean = destinations.any { it.enabled }
+}
+
+@Serializable
+public data class Destination(
+  /**
    * Can include all components of a typical URL, i.e. username, password, host, port, and path.
    * E.g. https://username:password@host:port/path/endpoint
-   *
-   * Setting this to `null` will disable BugBear entirely.
    */
-  val uploadUrl: String?,
+  val uploadUrl: String,
+
+  /** Each destination can be enabled or disabled individually. */
+  val enabled: Boolean = true,
 )
 
 public fun interface Populator {
